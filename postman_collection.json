@@ -1,0 +1,109 @@
+{
+  "info": {
+    "name": "MiniVault API",
+    "description": "Collection for testing the MiniVault API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Text",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"prompt\": \"Tell me a short story about a robot\",\n    \"max_tokens\": 150,\n    \"temperature\": 0.7\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/generate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "generate"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Text Stream",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"prompt\": \"Explain quantum computing in simple terms\",\n    \"max_tokens\": 200,\n    \"temperature\": 0.8,\n    \"stream\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/generate/stream",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "generate",
+            "stream"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Logs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/logs?limit=5",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "logs"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
