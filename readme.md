@@ -1,10 +1,15 @@
+
+
+
+
+
 # MiniVault API
 
 MiniVault API lets you send a text prompt and get a generated response, simulating a local AI model. You can interact with it using the CLI, curl, Postman, or review interactive API docs in your browser (for testing endpoints).
 
 This is all intended to run in the command line interface, streaming tokens.
 
-It first detects if any models are already installed then gives you options to select from a few models you'd like to use to run all locally, or you can start with a demo or "stubbed" version until you decide to install a model.
+It first detects if any models are already installed, then gives you options to select from a few models you'd like to use to run all locally, or you can start with a demo or "stubbed" version until you decide to install a model.
 
 ## 🚀 Quick Start
 
@@ -18,16 +23,23 @@ Then navigate to the folder, by default on Mac this will be in your home directo
 cd MiniVault
 ```
 # 2. From the new project directory, in MiniVault, create a virtual environment
-(this is recommended to keep it self-contained from system-wide Python packages)
+(This is recommended to keep it self-contained from system-wide Python packages)
 ```
 python3 -m venv venv
+```
+then
 
-source venv/bin/activate  (On Windows: venv\Scripts\activate)
+```
+source venv/bin/activate    
+
+// (Only for Windows:  venv\Scripts\activate )
 ```
 # 3. Install dependencies
 ```
 pip install -r requirements_txt.txt
-# or (common on macOS the command will instead use pip3)
+```
+(or usually pip3 will work instead on macOS)
+```
 pip3 install -r requirements_txt.txt
 ```
 # 4. Start the API
@@ -35,7 +47,13 @@ pip3 install -r requirements_txt.txt
 python3 minivault_api.py
 ```
 
-# 5. Now you will see it is successfully running and has checked for installed models, you can open a new terminal (keep the one running the program open) and activate the environment in a new terminal:
+This will check for all installed models and show which ones are loaded successfully!
+It will also allow you to choose which one to use on the backend
+1) Ollama (or prompt you to pre-install it with instructions if not, remember to run Ollama if you have it installed and run "ollama serve" then "ollama pull llama3" if you want to pull the llama3 model.  It will also give you the option to go back and select something else if you'd like.
+2) Hugging Face model, it will allow you to pick any Hugging Face model to use!  For instance, just paste the name of the model i.e. "HuggingFaceTB/SmolLM3-3B" for [this model](https://huggingface.co/HuggingFaceTB/SmolLM3-3B).  You can filter on hugging face "Tasks", and select Text Generation, if there is an error with the repo the command line will tell you.
+3) it will fall back on the demo version or "stubbed" version if no model is successfully loaded 
+
+# 5. It will now direct you to open a new terminal (keep the one running the program open) and activate an environment in a new terminal (in the Minivault directory):
 ```
 source venv/bin/activate
 ```
@@ -52,14 +70,7 @@ python3 test_client.py -p "What is the meaning of life?" --stream
 
 On first run, you’ll see a prompt to install a local model (Ollama or Hugging Face), or you can continue with stubbed responses.
 
-## 🖥️ Interactive Model Selection
-
-When you start the API, you will be prompted in the terminal to select which backend to use:
-- **[1] Ollama** (local LLM, recommended for best results)
-- **[2] Hugging Face Transformers** (choose from a list of models or enter your own)
-- **[3] Stubbed responses** (returns a hardcoded, simulated response for testing)
-
-The terminal will describe each option and guide you through the selection interactively. This makes it easy to get started, whether you want to use a real local model or just test the API without one.
+The API will be available at `http://localhost:8000` with interactive docs at `http://localhost:8000/docs` (for API testing only).
 
 ---
 
