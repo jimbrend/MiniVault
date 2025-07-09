@@ -342,71 +342,71 @@ async def get_logs(limit: int = 10):
     except FileNotFoundError:
         return {"logs": [], "total": 0}
 
-def interactive_model_setup():
+def interactive_model_setup(api_instance):
     print("\n\033[1mWelcome to MiniVault API!\033[0m")
     print("This project provides a local REST API that simulates LLM text generation. "
           "You can interact with it via the CLI, Swagger UI, Postman, or curl. "
           "It supports local models (Ollama, Hugging Face) or stubbed responses, and logs all interactions.")
     print("\n\033[1mApple Silicon (M1/M2/M3/M4) is fully supported.\033[0m")
-    print("\nChecking for available local models...\n")
 
-    # Check for Ollama
-    ollama_available = False
-    ollama_model = None
-    if REQUESTS_AVAILABLE:
-        try:
-            response = requests.get("http://localhost:11434/api/tags", timeout=2)
-            if response.status_code == 200:
-                models = response.json().get("models", [])
-                if models:
-                    ollama_available = True
-                    ollama_model = models[0]["name"]
-        except Exception:
-            pass
+    print("\nChoose a backend:")
+    print("[1] Use Ollama (local LLM, recommended for best results)")
+    print("[2] Use Hugging Face Transformers (choose a model)")
+    print("[3] Use stubbed responses (no real LLM)")
+    backend_choice = input("\nEnter your choice [1/2/3]: ").strip()
 
-    # Check for Hugging Face
-    hf_available = False
-    hf_model_name = "microsoft/DialoGPT-small"
-    if HF_AVAILABLE:
-        from transformers import AutoTokenizer, AutoModelForCausalLM
-        try:
-            AutoTokenizer.from_pretrained(hf_model_name)
-            AutoModelForCausalLM.from_pretrained(hf_model_name)
-            hf_available = True
-        except Exception:
-            hf_available = False
-
-    if ollama_available:
-        print(f"🦙 Ollama is running with model: {ollama_model}. No further setup needed.")
-        return "ollama"
-    elif hf_available:
-        print(f"🤗 Hugging Face model '{hf_model_name}' is available. No further setup needed.")
-        return "huggingface"
-    else:
-        print("\nNo local LLM models detected.")
-        print("Choose an option:")
-        print("[1] Install & run Ollama (recommended for Mac, easy setup)")
-        print("[2] Install Hugging Face Transformers (CPU-friendly model)")
-        print("[3] Continue with stubbed responses (no model)")
-        choice = input("\nEnter your choice [1/2/3]: ").strip()
-        if choice == "1":
-            print("\nTo install Ollama:")
-            print("  1. Visit https://ollama.ai/download and install for Mac (Apple Silicon supported)")
-            print("  2. Open Terminal and run: ollama serve")
-            print("  3. Pull a model, e.g.: ollama pull llama3")
-            print("  4. Restart this script after Ollama is running.")
+    if backend_choice == "1":
+        print("\nTo use Ollama:")
+        print("  1. Download and install from https://ollama.ai/download (Apple Silicon supported)")
+        print("  2. Open Terminal and run: ollama serve")
+        print("  3. Pull a model, e.g.: ollama pull llama3")
+        print("  4. Restart this script after Ollama is running.")
+        sys.exit(0)
+    elif backend_choice == "2":
+        if not HF_AVAILABLE:
+            print("\nTransformers not installed. Run: pip install transformers torch\nThen restart this script.")
             sys.exit(0)
-        elif choice == "2":
-            print("\nTo install Hugging Face Transformers:")
-            print("  1. Run: pip install transformers torch")
-            print(f"  2. The model '{hf_model_name}' will be downloaded automatically on first use.")
-            print("  3. Restart this script after installation.")
-            sys.exit(0)
+        print("\nAvailable Hugging Face models:")
+        print("[1] distilgpt2 (small, fast, better than DialoGPT-small)")
+        print("[2] gpt2 (larger, more capable, slower)")
+        print("[3] Custom (enter your own model name)")
+        hf_choice = input("\nEnter your choice [1/2/3]: ").strip()
+        if hf_choice == "1":
+            model_name = "distilgpt2"
+        elif hf_choice == "2":
+            model_name = "gpt2"
+        elif hf_choice == "3":
+            model_name = input("Enter the Hugging Face model name (e.g., gpt2-medium): ").strip()
         else:
-            print("\nProceeding with stubbed responses. You can set up a model later for real generations.")
-            return "stub"
+            print("Invalid choice. Defaulting to distilgpt2.")
+            model_name = "distilgpt2"
+        print(f"\n🤗 Downloading and loading model '{model_name}' (this may take a moment)...")
+        try:
+            from transformers import AutoTokenizer, AutoModelForCausalLM
+            api_instance.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            api_instance.model = AutoModelForCausalLM.from_pretrained(model_name)
+            if api_instance.tokenizer.pad_token is None:
+                api_instance.tokenizer.pad_token = api_instance.tokenizer.eos_token
+            api_instance.model_type = "huggingface"
+            api_instance.hf_model_name = model_name
+            print(f"✅ Hugging Face model '{model_name}' loaded.")
+        except Exception as e:
+            print(f"❌ Failed to load Hugging Face model '{model_name}': {e}")
+            print("Proceeding with stubbed responses.")
+            api_instance.model_type = "stub"
+    else:
+        print("\nYou have selected the stubbed response mode.\nThis option returns a hardcoded, simulated response instead of using a real language model.\nIt’s useful for testing the API without downloading or running any models.")
+        api_instance.model_type = "stub"
 
-# Only run the interactive setup if this script is executed directly
 if __name__ == "__main__":
-    interactive_model_setup()
+    # Initialize API instance
+    api = MiniVaultAPI()
+    interactive_model_setup(api)
+    print("\n🎉 MiniVault API is running!")
+    print("👉 Open http://localhost:8000/docs in your browser to test the API.")
+    print("👉 In a new terminal window, try:")
+    print("   python3 test_client.py -p \"Tell me a joke\"")
+    print("   python3 test_client.py -p \"Tell me a joke\" --stream")
+    print("👉 All interactions are logged in logs/log.jsonl")
+    print("Press CTRL+C to stop the server.\n")
     uvicorn.run("minivault_api:app", host="0.0.0.0", port=8000, reload=False)
