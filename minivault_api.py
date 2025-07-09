@@ -349,54 +349,70 @@ def interactive_model_setup(api_instance):
           "It supports local models (Ollama, Hugging Face) or stubbed responses, and logs all interactions.")
     print("\n\033[1mApple Silicon (M1/M2/M3/M4) is fully supported.\033[0m")
 
-    print("\nChoose a backend:")
-    print("[1] Use Ollama (local LLM, recommended for best results)")
-    print("[2] Use Hugging Face Transformers (choose a model)")
-    print("[3] Use stubbed responses (no real LLM)")
-    backend_choice = input("\nEnter your choice [1/2/3]: ").strip()
+    while True:
+        print("\nChoose a backend:")
+        print("[1] Use Ollama (local LLM, recommended for best results)")
+        print("[2] Use Hugging Face Transformers (choose a model)")
+        print("[3] Use stubbed responses (no real LLM)")
+        backend_choice = input("\nEnter your choice [1/2/3]: ").strip()
 
-    if backend_choice == "1":
-        print("\nTo use Ollama:")
-        print("  1. Download and install from https://ollama.ai/download (Apple Silicon supported)")
-        print("  2. Open Terminal and run: ollama serve")
-        print("  3. Pull a model, e.g.: ollama pull llama3")
-        print("  4. Restart this script after Ollama is running.")
-        sys.exit(0)
-    elif backend_choice == "2":
-        if not HF_AVAILABLE:
-            print("\nTransformers not installed. Run: pip install transformers torch\nThen restart this script.")
-            sys.exit(0)
-        print("\nAvailable Hugging Face models:")
-        print("[1] distilgpt2 (small, fast, better than DialoGPT-small)")
-        print("[2] gpt2 (larger, more capable, slower)")
-        print("[3] Custom (enter your own model name)")
-        hf_choice = input("\nEnter your choice [1/2/3]: ").strip()
-        if hf_choice == "1":
-            model_name = "distilgpt2"
-        elif hf_choice == "2":
-            model_name = "gpt2"
-        elif hf_choice == "3":
-            model_name = input("Enter the Hugging Face model name (e.g., gpt2-medium): ").strip()
+        if backend_choice == "1":
+            # Try to connect to Ollama
+            if api_instance.try_ollama():
+                print("\n🦙 Ollama is running and detected!")
+                proceed = input("Proceed with Ollama? (y/n): ").strip().lower()
+                if proceed == "y":
+                    api_instance.model_type = "ollama"
+                    print("\nProceeding with Ollama as the backend.")
+                    break
+                else:
+                    print("Returning to backend selection.\n")
+                    continue
+            else:
+                print("\nTo use Ollama:")
+                print("  1. Download and install from https://ollama.ai/download (Apple Silicon supported)")
+                print("  2. Open Terminal and run: ollama serve")
+                print("  3. Pull a model, e.g.: ollama pull llama3")
+                print("  4. Restart this script after Ollama is running.")
+                sys.exit(0)
+        elif backend_choice == "2":
+            if not HF_AVAILABLE:
+                print("\nTransformers not installed. Run: pip install transformers torch\nThen restart this script.")
+                sys.exit(0)
+            print("\nAvailable Hugging Face models:")
+            print("[1] distilgpt2 (small, fast, better than DialoGPT-small)")
+            print("[2] gpt2 (larger, more capable, slower)")
+            print("[3] Custom (enter your own model name)")
+            hf_choice = input("\nEnter your choice [1/2/3]: ").strip()
+            if hf_choice == "1":
+                model_name = "distilgpt2"
+            elif hf_choice == "2":
+                model_name = "gpt2"
+            elif hf_choice == "3":
+                model_name = input("Enter the Hugging Face model name (e.g., gpt2-medium): ").strip()
+            else:
+                print("Invalid choice. Defaulting to distilgpt2.")
+                model_name = "distilgpt2"
+            print(f"\n🤗 Downloading and loading model '{model_name}' (this may take a moment)...")
+            try:
+                from transformers import AutoTokenizer, AutoModelForCausalLM
+                api_instance.tokenizer = AutoTokenizer.from_pretrained(model_name)
+                api_instance.model = AutoModelForCausalLM.from_pretrained(model_name)
+                if api_instance.tokenizer.pad_token is None:
+                    api_instance.tokenizer.pad_token = api_instance.tokenizer.eos_token
+                api_instance.model_type = "huggingface"
+                api_instance.hf_model_name = model_name
+                print(f"✅ Hugging Face model '{model_name}' loaded.")
+                break
+            except Exception as e:
+                print(f"❌ Failed to load Hugging Face model '{model_name}': {e}")
+                print("Proceeding with stubbed responses.")
+                api_instance.model_type = "stub"
+                break
         else:
-            print("Invalid choice. Defaulting to distilgpt2.")
-            model_name = "distilgpt2"
-        print(f"\n🤗 Downloading and loading model '{model_name}' (this may take a moment)...")
-        try:
-            from transformers import AutoTokenizer, AutoModelForCausalLM
-            api_instance.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            api_instance.model = AutoModelForCausalLM.from_pretrained(model_name)
-            if api_instance.tokenizer.pad_token is None:
-                api_instance.tokenizer.pad_token = api_instance.tokenizer.eos_token
-            api_instance.model_type = "huggingface"
-            api_instance.hf_model_name = model_name
-            print(f"✅ Hugging Face model '{model_name}' loaded.")
-        except Exception as e:
-            print(f"❌ Failed to load Hugging Face model '{model_name}': {e}")
-            print("Proceeding with stubbed responses.")
+            print("\nYou have selected the stubbed response mode.\nThis option returns a hardcoded, simulated response instead of using a real language model.\nIt’s useful for testing the API without downloading or running any models.")
             api_instance.model_type = "stub"
-    else:
-        print("\nYou have selected the stubbed response mode.\nThis option returns a hardcoded, simulated response instead of using a real language model.\nIt’s useful for testing the API without downloading or running any models.")
-        api_instance.model_type = "stub"
+            break
 
 if __name__ == "__main__":
     # Initialize API instance

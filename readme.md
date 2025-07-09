@@ -27,9 +27,7 @@ source venv/bin/activate  (On Windows: venv\Scripts\activate)
 # 3. Install dependencies
 ```
 pip install -r requirements_txt.txt
-
-(or usually pip3 will work instead on macOS)
-
+# or (common on macOS the command will instead use pip3)
 pip3 install -r requirements_txt.txt
 ```
 # 4. Start the API
@@ -54,7 +52,14 @@ python3 test_client.py -p "What is the meaning of life?" --stream
 
 On first run, you’ll see a prompt to install a local model (Ollama or Hugging Face), or you can continue with stubbed responses.
 
-The API will be available at `http://localhost:8000` with interactive docs at `http://localhost:8000/docs` (for API testing only).
+## 🖥️ Interactive Model Selection
+
+When you start the API, you will be prompted in the terminal to select which backend to use:
+- **[1] Ollama** (local LLM, recommended for best results)
+- **[2] Hugging Face Transformers** (choose from a list of models or enter your own)
+- **[3] Stubbed responses** (returns a hardcoded, simulated response for testing)
+
+The terminal will describe each option and guide you through the selection interactively. This makes it easy to get started, whether you want to use a real local model or just test the API without one.
 
 ---
 
