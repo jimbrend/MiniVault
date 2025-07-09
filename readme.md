@@ -8,35 +8,46 @@ It first detects if any models are already installed then gives you options to s
 
 ## 🚀 Quick Start
 
-```bash
+
 # 1. Clone the project from GitHub
+```
 git clone https://github.com/jimbrend/MiniVault.git
-
+```
 Then navigate to the folder, by default on Mac this will be in your home directory so you can just type:
+```
 cd MiniVault
-
-# 2. From the new project directory, in MiniVault, reate a virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements_txt.txt
-(or usually pip3 will work instead on macOS)
-pip3 install -r requirements_txt.txt
-
-# 4. Start the API
-python3 minivault_api.py
-
-
-# 4. Now you can open a new terminal and recommended to first run:
-source venv/bin/activate
-
+```
+# 2. From the new project directory, in MiniVault, create a virtual environment
 (this is recommended to keep it self-contained from system-wide Python packages)
+```
+python3 -m venv venv
+
+source venv/bin/activate  (On Windows: venv\Scripts\activate)
+```
+# 3. Install dependencies
+```
+pip install -r requirements_txt.txt
+
+(or usually pip3 will work instead on macOS)
+
+pip3 install -r requirements_txt.txt
+```
+# 4. Start the API
+```
+python3 minivault_api.py
+```
+
+# 5. Now you will see it is successfully running and has checked for installed models, you can open a new terminal (keep the one running the program open) and activate the environment in a new terminal:
+```
+source venv/bin/activate
+```
 
 Example commands after you've gone through the installation selections:
-python3 test_client.py -p "What is the meaning of life?" --stream
-
+```
+python3 test_client.py -p "What is the meaning of life?" 
+```
 add streaming flag to see streaming response:
+```
 python3 test_client.py -p "What is the meaning of life?" --stream
 
 ```
