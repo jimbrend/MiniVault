@@ -1,12 +1,13 @@
 # MiniVault API
 
-MiniVault API lets you send a text prompt and get a generated response, simulating a local AI model. You can use it from your terminal or browser, and it works even if you don’t have a model installed.
+MiniVault API lets you send a text prompt and get a generated response, simulating a local AI model. You can interact with it using the CLI, curl, Postman, or the interactive API docs in your browser (for testing endpoints, not as a chat interface).
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Clone or extract the project
-cd Take-Home
+# 1. Clone the project from GitHub
+git clone https://github.com/jimbrend/MiniVault.git
+cd MiniVault
 
 # 2. Create a virtual environment
 python3 -m venv venv
@@ -21,7 +22,7 @@ python3 minivault_api.py
 
 On first run, you’ll see a prompt to install a local model (Ollama or Hugging Face), or you can continue with stubbed responses.
 
-The API will be available at `http://localhost:8000` with interactive docs at `http://localhost:8000/docs`.
+The API will be available at `http://localhost:8000` with interactive docs at `http://localhost:8000/docs` (for API testing only).
 
 ---
 
