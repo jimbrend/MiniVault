@@ -5,7 +5,7 @@
 
 # MiniVault API
 
-MiniVault API lets you send a text prompt and get a generated response, simulating a local AI model. You can interact with it using the CLI, curl, Postman, or review interactive API docs in your browser (for testing endpoints).
+I built MiniVault API, it lets you send a text prompt and get a generated response, simulating a local AI model if it doesn't detect on running on your system already and allows you to go through a prompt to select on or input the name of a Hugging Face model to run if you don't have Ollama installed and it works on the command line with an API web interface too to monitor its connections. You can interact with it using the CLI, curl, Postman, or review interactive API docs in your browser (for testing endpoints).
 
 This is all intended to run in the command line interface, streaming tokens.
 
