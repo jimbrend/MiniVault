@@ -49,7 +49,7 @@ python3 minivault_api.py
 
 This will check for all installed models and show which ones are loaded successfully!
 It will also allow you to choose which one to use on the backend
-1) Ollama (or prompt you to pre-install it with instructions if not, remember to run Ollama if you have it installed and run "ollama serve" then "ollama pull llama3" if you want to pull the llama3 model.  It will also give you the option to go back and select something else if you'd like.
+1) Ollama (or prompt you to pre-install it with instructions if not, remember to run Ollama if you have it installed and run "ollama serve" then "ollama pull llama3" if you want to pull the llama3 model).  It will also give you the option to go back and select something else if you'd like.
 2) Hugging Face model, it will allow you to pick any Hugging Face model to use!  For instance, just paste the name of the model i.e. "HuggingFaceTB/SmolLM3-3B" for [this model](https://huggingface.co/HuggingFaceTB/SmolLM3-3B).  You can filter on hugging face "Tasks", and select Text Generation, if there is an error with the repo the command line will tell you.
 3) it will fall back on the demo version or "stubbed" version if no model is successfully loaded 
 
